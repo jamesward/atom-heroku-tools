@@ -1,0 +1,11 @@
+'menu': [
+  {
+    'label': 'Heroku'
+    'submenu': [
+      {
+        'label': 'Login'
+        'command': 'heroku:login'
+      }
+    ]
+  }
+]

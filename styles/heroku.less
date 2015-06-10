@@ -1,0 +1,17 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+atom-text-editor::shadow .password-lines .line {
+  span.text:before {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    color: @text-color !important;
+  }
+  span.text {
+    color:rgba(0, 0, 0, 0);
+  }
+}

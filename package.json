@@ -1,0 +1,19 @@
+{
+  "name": "heroku-tools",
+  "main": "./lib/heroku",
+  "version": "0.0.0",
+  "description": "Heroku Tools",
+  "keywords": [
+    "heroku"
+  ],
+  "repository": "https://github.com/jamesward/atom-heroku-tools",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+    "space-pen": "^5.1.1",
+    "atom-space-pen-views": "^2.0.5",
+    "request": "^2.57.0"
+  }
+}
