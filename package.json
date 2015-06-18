@@ -14,6 +14,7 @@
   "dependencies": {
     "space-pen": "^5.1.1",
     "atom-space-pen-views": "^2.0.5",
-    "request": "^2.57.0"
+    "request": "^2.57.0",
+    "netrc2": "^0.1.1"
   }
 }
