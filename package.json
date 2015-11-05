@@ -1,7 +1,7 @@
 {
   "name": "heroku-tools",
   "main": "./lib/heroku",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Heroku Tools",
   "keywords": [
     "heroku"
@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "space-pen": "^5.1.1",
-    "atom-space-pen-views": "^2.0.5",
-    "request": "^2.57.0",
-    "netrc2": "^0.1.1"
+    "atom-space-pen-views": "^2.1.0",
+    "request": "^2.65.0",
+    "netrc2": "^0.1.4",
+    "heroku-client": "^2.3.1",
+    "heroku-source-deployer": "^0.0.1"
   }
 }

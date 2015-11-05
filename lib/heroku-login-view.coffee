@@ -1,5 +1,7 @@
 {View} = require 'space-pen'
 
+Menu = require './menu'
+
 MiniTextView = require './views/mini-text-view'
 PasswordView = require './views/password-view'
 
@@ -24,14 +26,25 @@ module.exports =
       @passwordModel = @passwordEditor.getModel()
       @secondFactorModel = @secondFactorEditor.getModel()
 
+      @usernameEditor.on 'keydown', (event) =>
+        if (event.keyCode == 9)
+          @passwordEditor.focus()
+          event.preventDefault()
+
       @passwordEditor.on 'keydown', (event) =>
         if (event.keyCode == 13)
           @login()
+        if (event.keyCode == 9)
+          @secondFactorEditor.focus()
+          event.preventDefault()
 
       @secondFactorEditor.on 'keydown', (event) =>
         if (event.keyCode == 13)
           @login()
 
+      @loginButton.on 'keydown', (event) =>
+        if (event.keyCode == 13)
+          @login()
 
     destroy: ->
       @detach()
@@ -89,9 +102,12 @@ module.exports =
           machines = netrc()
           machines['api.heroku.com'] = [@username, accessToken]
           machines.save()
-          
+
           @hide()
+
+          Menu.update()
         else
           @errorLabel.text('Login error: ' + body.error)
           @errorLabel.show()
           @enable()
+          Menu.update()
