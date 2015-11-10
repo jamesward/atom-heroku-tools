@@ -3,6 +3,7 @@ Heroku = require 'heroku-client'
 Menu = require './menu'
 
 HerokuLoginView = require './heroku-login-view'
+HerokuDeployView = require './heroku-deploy-view'
 {CompositeDisposable} = require 'atom'
 
 module.exports = HerokuTools =
@@ -19,10 +20,12 @@ module.exports = HerokuTools =
         'core:close': => @HerokuLoginView.hide()
 
       @HerokuLoginView = new HerokuLoginView
+      @HerokuDeployView = new HerokuDeployView
 
     deactivate: ->
       @subscriptions.dispose()
       @HerokuLoginView.destroy()
+      @HerokuDeployView.destroy()
 
     serialize: ->
 
@@ -37,3 +40,4 @@ module.exports = HerokuTools =
       Menu.update()
 
     deploy: ->
+      @HerokuDeployView.show()
