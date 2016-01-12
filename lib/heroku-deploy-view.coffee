@@ -14,6 +14,7 @@ module.exports =
       super
       @addClass('overlay from-top')
       @modalPanel ?= atom.workspace.addModalPanel(item: this)
+      @modalPanel.hide()
       @loadApps
 
     loadApps: ->
