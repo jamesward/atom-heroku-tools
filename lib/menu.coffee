@@ -7,7 +7,7 @@ module.exports = Menu =
     machines = netrc()
     herokuAuth = machines['api.heroku.com']
 
-    if herokuAuth.length == 2
+    if herokuAuth != undefined && herokuAuth.length == 2
       herokuLogin = herokuAuth[0]
       herokuToken = herokuAuth[1]
 
