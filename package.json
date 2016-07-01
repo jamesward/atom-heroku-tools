@@ -1,7 +1,7 @@
 {
   "name": "heroku-tools",
   "main": "./lib/heroku",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Heroku Tools",
   "keywords": [
     "heroku"
