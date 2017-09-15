@@ -1,31 +1,26 @@
 {View} = require 'space-pen'
-
-Menu = require './menu'
+{TextEditorView} = require 'atom-space-pen-views'
 
 MiniTextView = require './views/mini-text-view'
 PasswordView = require './views/password-view'
 
-# based on: https://github.com/spark/spark-dev/blob/master/lib/views/login-view.coffee
-module.exports =
-  class HerokuLoginView extends View
+Menu = require './menu'
+{login} = require './util'
+
+module.exports = class HerokuLoginView extends View
 
     @content: ->
       @div =>
         @h1 'Log in to Heroku'
-        @subview 'usernameEditor', new MiniTextView("Username")
-        @subview 'passwordEditor', new PasswordView("Password")
-        @subview 'secondFactorEditor', new PasswordView("Two-factor code (if enabled)")
+        @subview 'usernameEditor', new MiniTextView('Username')
+        @subview 'passwordEditor', new PasswordView('Password')
+        @subview 'secondFactorEditor', new PasswordView('Two-factor code (if enabled)')
         @div class: 'text-error block', outlet: 'errorLabel'
         @div class: 'block', =>
-          @button click: 'login', id: 'loginButton', class: 'btn btn-primary', outlet: 'loginButton', 'Log in'
+          @button click: 'doLogin', id: 'loginButton', class: 'btn btn-primary', outlet: 'loginButton', 'Log in'
           @button click: 'cancel', id: 'cancelButton', class: 'btn', 'Cancel'
 
     initialize: ->
-      @modalPanel = atom.workspace.addModalPanel(item: this, visible: false)
-      @usernameModel = @usernameEditor.getModel()
-      @passwordModel = @passwordEditor.getModel()
-      @secondFactorModel = @secondFactorEditor.getModel()
-
       @usernameEditor.on 'keydown', (event) =>
         if (event.keyCode == 9)
           @passwordEditor.focus()
@@ -33,36 +28,24 @@ module.exports =
 
       @passwordEditor.on 'keydown', (event) =>
         if (event.keyCode == 13)
-          @login()
+          @doLogin()
         if (event.keyCode == 9)
           @secondFactorEditor.focus()
           event.preventDefault()
 
       @secondFactorEditor.on 'keydown', (event) =>
         if (event.keyCode == 13)
-          @login()
+          @doLogin()
 
       @loginButton.on 'keydown', (event) =>
         if (event.keyCode == 13)
-          @login()
+          @doLogin()
 
-    destroy: ->
-      @detach()
-
-    show: ->
-      @enable()
-      @modalPanel.show()
-      @errorLabel.hide()
+    attached: ->
       @usernameEditor.focus()
 
-    hide: ->
-      @usernameModel.setText ''
-      @passwordModel.setText ''
-      @secondFactorModel.setText ''
-      @modalPanel.hide()
-
     cancel: ->
-      @hide()
+      atom.commands.dispatch(this.element, 'core:cancel')
 
     disable: ->
       @usernameEditor.setEnabled false
@@ -76,38 +59,18 @@ module.exports =
       @secondFactorEditor.setEnabled true
       @loginButton.removeAttr 'disabled'
 
-    login: ->
+    doLogin: ->
       @disable()
       @errorLabel.hide()
 
-      @username = @usernameModel.getText()
-      @password = @passwordModel.getText()
-      @secondFactor = @secondFactorModel.getText()
+      @username = @usernameEditor.getModel().getText()
+      @password = @passwordEditor.getModel().getText()
+      @secondFactor = @secondFactorEditor.getModel().getText()
 
-      request = require('request')
-
-      options =
-        json: true
-        auth:
-          user: @username
-          pass: @password
-        headers:
-          'Heroku-Two-Factor-Code': @secondFactor
-
-      request.post 'https://api.heroku.com/oauth/authorizations', options, (error, response, body) =>
-        if !error and response.statusCode == 201
-          accessToken = body.access_tokens[0].token
-
-          netrc = require('netrc2')
-          machines = netrc()
-          machines['api.heroku.com'] = [@username, accessToken]
-          machines.save()
-
-          @hide()
-
-          Menu.update()
-        else
-          @errorLabel.text('Login error: ' + body.error)
-          @errorLabel.show()
-          @enable()
-          Menu.update()
+      login(@username, @password, @secondFactor).then (accessToken) =>
+        Menu.update()
+        @cancel()
+      .catch (error) =>
+        @errorLabel.text('Login error: ' + error)
+        @errorLabel.show()
+        @enable()
